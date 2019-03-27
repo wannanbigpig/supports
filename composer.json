@@ -1,0 +1,41 @@
+{
+    "name": "wannanbigpig/supports",
+    "description": "各类基础操作支持",
+    "license": "MIT",
+    "keywords": [
+        "basics",
+        "curl",
+        "logs"
+    ],
+    "type": "library",
+    "support": {
+        "issues": "https://github.com/wannanbigpig/supports/issues",
+        "source": "https://github.com/wannanbigpig/supports"
+    },
+    "authors": [
+        {
+            "name": "liuml",
+            "email": "liumenglei0211@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.6",
+        "ext-json": "*",
+        "ext-libxml": "*",
+        "ext-simplexml": "*",
+        "monolog/monolog": "^1.23",
+        "guzzlehttp/guzzle": "^6.2"
+    },
+    "require-dev": {
+    },
+    "autoload": {
+        "psr-4": {
+            "WannanBigPig\\supports\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "WannanBigPig\\supports\\Tests\\": "tests"
+        }
+    }
+}
