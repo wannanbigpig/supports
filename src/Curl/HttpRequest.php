@@ -7,10 +7,12 @@
      * DateTime: 2019-03-25  11:22
      */
 
+    namespace WannanBigPig\supports\Curl;
+
     use GuzzleHttp\Client;
     use Psr\Http\Message\ResponseInterface;
 
-    class HttpRequest
+    trait HttpRequest
     {
 
         /**
@@ -72,7 +74,6 @@
         {
             if (is_null($this->httpClient)) {
                 $this->httpClient = new Client($this->getOptions());
-                $this->httpClient->post();
             }
 
             return $this->httpClient;
