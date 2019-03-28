@@ -141,7 +141,7 @@
          */
         public static function createLogger($file = NULL, $identify = 'wannanbigpig.supports', $level = Logger::DEBUG, $type = 'daily', $max_files = 30)
         {
-            $file    = is_null($file) ? sys_get_temp_dir() . '/logs/' . $identify . '.log' : $file;
+            $file    = is_null($file) ? sys_get_temp_dir() . 'logs/' . $identify . '.log' : $file;
             $handler = $type === 'single' ? new StreamHandler($file, $level) : new RotatingFileHandler($file, $max_files, $level);
             $handler->setFormatter(
                 new LineFormatter("%datetime% > %channel%.%level_name% > %message% %context% %extra%\r\n", NULL, false, true)
