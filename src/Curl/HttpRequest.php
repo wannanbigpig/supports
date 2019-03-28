@@ -131,8 +131,7 @@
          * @author   liuml  <liumenglei0211@163.com>
          * @DateTime 2019-03-26  15:59
          */
-        public
-        function unwrapResponse(ResponseInterface $response)
+        public function unwrapResponse(ResponseInterface $response)
         {
             $contentType = $response->getHeaderLine('Content-Type');
             $contents    = $response->getBody()->getContents();
