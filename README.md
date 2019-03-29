@@ -29,13 +29,13 @@ public function query()
 
 // 测试Config,支持用点获取多维数组，接口 ArrayAccess, IteratorAggregate, Countable
 public function Config()
-    {
-        $config = new Config([
-            'aaa' => 'sfa',
-            'bbb' => 'bbb'
-        ]);
-        $config->set('a.b',['ads','dsds']);
-        print_r($config->get('ccc'));
-        print_r($config->get());
-    }
+{
+    $config = new Config([
+        'aaa' => 'sfa',
+        'bbb' => 'bbb'
+    ]);
+    $config->set('a.b',['ads','dsds']);
+    print_r($config->get('ccc'));
+    print_r($config->get());
+}
 ```
