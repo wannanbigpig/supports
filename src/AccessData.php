@@ -61,7 +61,8 @@ class AccessData implements ArrayAccess, IteratorAggregate, Countable
     public function set($key, $value)
     {
         if (is_null($key)) {
-            return false;
+            $this->setItems($value);
+            return $array = $value;
         }
 
         $array = $this->getItems();
