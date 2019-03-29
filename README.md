@@ -7,7 +7,7 @@ composer require wannanbigpig/supports
 ```
 
 # 使用说明
-```
+```php
 // public static function createLogger($file = NULL, $identify = 'wannanbigpig.supports', $level = Logger::DEBUG, $type = 'daily', $max_files = 30) 方法配置日志路径等
 
 // 测试日志
