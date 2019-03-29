@@ -30,12 +30,12 @@
     },
     "autoload": {
         "psr-4": {
-            "WannanBigPig\\supports\\": "src"
+            "WannanBigPig\\Supports\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "WannanBigPig\\supports\\Tests\\": "tests"
+            "WannanBigPig\\Supports\\Tests\\": "tests"
         }
     }
 }
