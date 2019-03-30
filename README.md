@@ -27,7 +27,7 @@ public function query()
     ]);
 }
 
-// 测试Config,支持用点获取多维数组，接口 ArrayAccess, IteratorAggregate, Countable
+// 测试Config,支持用点获取多维数组，接口 IteratorAggregate, ArrayAccess, Serializable, Countable
 public function Config()
 {
     $config = new Config([
