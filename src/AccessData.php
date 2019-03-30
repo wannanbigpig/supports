@@ -13,17 +13,18 @@ namespace WannanBigPig\Supports;
 
 use IteratorAggregate;
 use ArrayAccess;
+use Serializable;
 use Countable;
 use ArrayIterator;
 
-class AccessData implements ArrayAccess, IteratorAggregate, Countable
+class AccessData implements IteratorAggregate, ArrayAccess, Serializable, Countable
 {
     /**
      * Deposited data.
      *
      * @var array
      */
-    public $items = [];
+    protected $items = [];
 
     /**
      * Initialization data.
@@ -33,6 +34,23 @@ class AccessData implements ArrayAccess, IteratorAggregate, Countable
     public function __construct(array $items = [])
     {
         $this->setItems($items);
+    }
+
+    /**
+     * static __set_state
+     *
+     * @param array $array
+     *
+     * @return mixed
+     *
+     *
+     * @author   liuml  <liumenglei0211@163.com>
+     *
+     * @DateTime 2019-03-30  11:58
+     */
+    public static function __set_state(array $array = [])
+    {
+        return (new static())->getItems();
     }
 
     /**
@@ -52,20 +70,44 @@ class AccessData implements ArrayAccess, IteratorAggregate, Countable
         return $this->toJson();
     }
 
-
+    /**
+     * to json
+     *
+     * @param int $option
+     *
+     * @return false|string
+     *
+     *
+     * @author   liuml  <liumenglei0211@163.com>
+     *
+     * @DateTime 2019-03-30  10:08
+     */
     public function toJson($option = JSON_UNESCAPED_UNICODE)
     {
         return json_encode($this->getItems(), $option);
     }
 
-    public function set($key, $value)
+    /**
+     * set
+     *
+     * @param $key
+     * @param $value
+     *
+     * @return array|mixed
+     *
+     *
+     * @author   liuml  <liumenglei0211@163.com>
+     *
+     * @DateTime 2019-03-30  10:08
+     */
+    protected function set($key, $value)
     {
+        // get items
+        $array = &$this->items;
+
         if (is_null($key)) {
-            $this->setItems($value);
             return $array = $value;
         }
-
-        $array = $this->getItems();
 
         $keys = explode('.', $key);
 
@@ -81,11 +123,43 @@ class AccessData implements ArrayAccess, IteratorAggregate, Countable
         }
         $array[array_shift($keys)] = $value;
 
-        $this->setItems($array);
-
         return $array;
     }
 
+    /**
+     * merge
+     *
+     * @param $items
+     *
+     * @return mixed
+     *
+     *
+     * @author   liuml  <liumenglei0211@163.com>
+     *
+     * @DateTime 2019-03-30  14:08
+     */
+    public function merge($items)
+    {
+        foreach ($items as $key => $value) {
+            $this->set($key, $value);
+        }
+
+        return $this->getItems();
+    }
+
+    /**
+     * get
+     *
+     * @param null $key
+     * @param null $default
+     *
+     * @return array|mixed|null
+     *
+     *
+     * @author   liuml  <liumenglei0211@163.com>
+     *
+     * @DateTime 2019-03-30  10:20
+     */
     public function get($key = NULL, $default = NULL)
     {
         $array = $this->getItems();
@@ -108,6 +182,18 @@ class AccessData implements ArrayAccess, IteratorAggregate, Countable
         return $array;
     }
 
+    /**
+     * forget
+     *
+     * @param $array
+     * @param $keys
+     *
+     *
+     *
+     * @author   liuml  <liumenglei0211@163.com>
+     *
+     * @DateTime 2019-03-30  10:20
+     */
     public function forget(&$array, $keys)
     {
         $original = &$array;
@@ -129,7 +215,7 @@ class AccessData implements ArrayAccess, IteratorAggregate, Countable
     /**
      * @param array $items
      */
-    public function setItems(array $items): void
+    protected function setItems(array $items): void
     {
         $this->items = $items;
     }
@@ -137,17 +223,72 @@ class AccessData implements ArrayAccess, IteratorAggregate, Countable
     /**
      * @return array
      */
-    public function getItems(): array
+    protected function getItems(): array
     {
         return $this->items;
     }
 
-
+    /**
+     * count
+     *
+     *
+     * @return int
+     *
+     *
+     * @author   liuml  <liumenglei0211@163.com>
+     *
+     * @DateTime 2019-03-30  10:54
+     */
     public function count()
     {
         return count($this->getItems());
     }
 
+    /**
+     * serialize
+     *
+     *
+     * @return string
+     *
+     *
+     * @author   liuml  <liumenglei0211@163.com>
+     *
+     * @DateTime 2019-03-30  11:00
+     */
+    public function serialize()
+    {
+        return serialize($this->items);
+    }
+
+    /**
+     * unserialize
+     *
+     * @param string $serialized
+     *
+     * @return mixed
+     *
+     *
+     * @author   liuml  <liumenglei0211@163.com>
+     *
+     * @DateTime 2019-03-30  11:05
+     */
+    public function unserialize($serialized)
+    {
+        return $this->items = unserialize($serialized);
+    }
+
+    /**
+     * offsetExists
+     *
+     * @param mixed $offset
+     *
+     * @return bool
+     *
+     *
+     * @author   liuml  <liumenglei0211@163.com>
+     *
+     * @DateTime 2019-03-30  10:54
+     */
     public function offsetExists($offset)
     {
         return !is_null($this->get($offset));
@@ -182,7 +323,7 @@ class AccessData implements ArrayAccess, IteratorAggregate, Countable
      *
      * @DateTime 2019-03-29  15:18
      */
-    public function offsetGet($offset)
+    public function offsetGet($offset = '')
     {
         return $this->get($offset);
     }
@@ -201,7 +342,7 @@ class AccessData implements ArrayAccess, IteratorAggregate, Countable
     public function offsetUnset($offset)
     {
         if ($this->offsetExists($offset)) {
-            $this->forget($this->getItems(), $offset);
+            $this->forget($this->items, $offset);
         }
     }
 
@@ -214,10 +355,10 @@ class AccessData implements ArrayAccess, IteratorAggregate, Countable
      *
      * @author   liuml  <liumenglei0211@163.com>
      *
-     * @DateTime 2019-03-29  15:23
+     * @DateTime 2019-03-30  11:59
      */
     public function getIterator()
     {
-        return new ArrayIterator($this->getItems());
+        return new ArrayIterator($this->items);
     }
 }
