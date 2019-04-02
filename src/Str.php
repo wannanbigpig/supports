@@ -11,7 +11,6 @@
 
 namespace WannanBigPig\Supports;
 
-
 class Str
 {
 
@@ -28,10 +27,9 @@ class Str
      *
      * @return mixed
      *
-     *
      * @author   liuml  <liumenglei0211@163.com>
      *
-     * @DateTime 2019-04-02  10:38
+     * @DateTime 2019-04-02  14:31
      */
     public static function studly($value)
     {
