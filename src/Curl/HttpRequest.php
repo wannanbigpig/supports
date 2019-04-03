@@ -29,12 +29,16 @@ trait HttpRequest
 
     /**
      * get
+     *
      * @param string $uri
      * @param array  $query
      * @param array  $headers
-     * @return array|string
+     *
+     * @return mixed
+     *
      * @author   liuml  <liumenglei0211@163.com>
-     * @DateTime 2019-03-27  10:59
+     *
+     * @DateTime 2019-04-03  11:38
      */
     public function get(string $uri, $query = [], $headers = [])
     {
@@ -65,12 +69,14 @@ trait HttpRequest
 
     /**
      * getHttpClient
-     * @return Client
+     *
+     * @return Client|null
+     *
      * @author   liuml  <liumenglei0211@163.com>
-     * @DateTime 2019-03-26  14:49
+     *
+     * @DateTime 2019-04-03  11:37
      */
-    public
-    function getHttpClient()
+    public function getHttpClient()
     {
         if (is_null($this->httpClient)) {
             $this->httpClient = new Client($this->getOptions());
@@ -81,12 +87,14 @@ trait HttpRequest
 
     /**
      * getOptions
+     *
      * @return array
+     *
      * @author   liuml  <liumenglei0211@163.com>
-     * @DateTime 2019-03-26  14:59
+     *
+     * @DateTime 2019-04-03  11:37
      */
-    public
-    function getOptions()
+    public function getOptions()
     {
         return array_merge([
             'base_uri'        => property_exists($this, 'baseUri') ? $this->baseUri : '',
@@ -97,13 +105,16 @@ trait HttpRequest
 
     /**
      * setHttpClient
+     *
      * @param Client $client
+     *
      * @return $this
+     *
      * @author   liuml  <liumenglei0211@163.com>
-     * @DateTime 2019-03-26  15:58
+     *
+     * @DateTime 2019-04-03  11:37
      */
-    public
-    function setHttpClient(Client $client)
+    public function setHttpClient(Client $client)
     {
         $this->httpClient = $client;
         return $this;
@@ -111,25 +122,32 @@ trait HttpRequest
 
     /**
      * request
+     *
      * @param       $method
      * @param       $uri
      * @param array $options
+     *
      * @return mixed
+     *
      * @author   liuml  <liumenglei0211@163.com>
-     * @DateTime 2019-03-26  15:58
+     *
+     * @DateTime 2019-04-03  11:37
      */
-    public
-    function request($method, $uri, $options = [])
+    public function request($method, $uri, $options = [])
     {
         return $this->unwrapResponse($this->getHttpClient()->{$method}($uri, $options));
     }
 
     /**
      * unwrapResponse
+     *
      * @param ResponseInterface $response
-     * @return mixed
+     *
+     * @return mixed|string
+     *
      * @author   liuml  <liumenglei0211@163.com>
-     * @DateTime 2019-03-26  15:59
+     *
+     * @DateTime 2019-04-03  11:38
      */
     public function unwrapResponse(ResponseInterface $response)
     {
