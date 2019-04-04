@@ -17,6 +17,12 @@ class Exception extends \Exception
     const BUSINESS_ERROR = 10001;
 
     /**
+     * 应用异常
+     * @var int
+     */
+    const APPLICATION_ERROR = 80001;
+
+    /**
      * Raw error info.
      *
      * @var array
