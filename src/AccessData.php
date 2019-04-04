@@ -41,12 +41,10 @@ class AccessData implements IteratorAggregate, ArrayAccess, Serializable, Counta
      *
      * @param array $array
      *
-     * @return mixed
-     *
+     * @return array
      *
      * @author   liuml  <liumenglei0211@163.com>
-     *
-     * @DateTime 2019-03-30  11:58
+     * @DateTime 2019-04-04  14:19
      */
     public static function __set_state(array $array = [])
     {
@@ -56,13 +54,10 @@ class AccessData implements IteratorAggregate, ArrayAccess, Serializable, Counta
     /**
      * __toString
      *
-     *
-     * @return string
-     *
+     * @return false|string
      *
      * @author   liuml  <liumenglei0211@163.com>
-     *
-     * @DateTime 2019-03-29  14:57
+     * @DateTime 2019-04-04  14:19
      */
     public function __toString()
     {
@@ -71,16 +66,14 @@ class AccessData implements IteratorAggregate, ArrayAccess, Serializable, Counta
     }
 
     /**
-     * to json
+     * toJson
      *
      * @param int $option
      *
      * @return false|string
      *
-     *
      * @author   liuml  <liumenglei0211@163.com>
-     *
-     * @DateTime 2019-03-30  10:08
+     * @DateTime 2019-04-04  14:19
      */
     public function toJson($option = JSON_UNESCAPED_UNICODE)
     {
@@ -95,10 +88,8 @@ class AccessData implements IteratorAggregate, ArrayAccess, Serializable, Counta
      *
      * @return array|mixed
      *
-     *
      * @author   liuml  <liumenglei0211@163.com>
-     *
-     * @DateTime 2019-03-30  10:08
+     * @DateTime 2019-04-04  14:19
      */
     protected function set($key, $value)
     {
@@ -131,12 +122,10 @@ class AccessData implements IteratorAggregate, ArrayAccess, Serializable, Counta
      *
      * @param $items
      *
-     * @return mixed
-     *
+     * @return array
      *
      * @author   liuml  <liumenglei0211@163.com>
-     *
-     * @DateTime 2019-03-30  14:08
+     * @DateTime 2019-04-04  14:19
      */
     public function merge($items)
     {
@@ -155,10 +144,8 @@ class AccessData implements IteratorAggregate, ArrayAccess, Serializable, Counta
      *
      * @return array|mixed|null
      *
-     *
      * @author   liuml  <liumenglei0211@163.com>
-     *
-     * @DateTime 2019-03-30  10:20
+     * @DateTime 2019-04-04  14:19
      */
     public function get($key = NULL, $default = NULL)
     {
@@ -188,11 +175,8 @@ class AccessData implements IteratorAggregate, ArrayAccess, Serializable, Counta
      * @param $array
      * @param $keys
      *
-     *
-     *
      * @author   liuml  <liumenglei0211@163.com>
-     *
-     * @DateTime 2019-03-30  10:20
+     * @DateTime 2019-04-04  14:19
      */
     public function forget(&$array, $keys)
     {
@@ -231,13 +215,10 @@ class AccessData implements IteratorAggregate, ArrayAccess, Serializable, Counta
     /**
      * count
      *
-     *
      * @return int
      *
-     *
      * @author   liuml  <liumenglei0211@163.com>
-     *
-     * @DateTime 2019-03-30  10:54
+     * @DateTime 2019-04-04  14:19
      */
     public function count()
     {
@@ -247,13 +228,10 @@ class AccessData implements IteratorAggregate, ArrayAccess, Serializable, Counta
     /**
      * serialize
      *
-     *
      * @return string
      *
-     *
      * @author   liuml  <liumenglei0211@163.com>
-     *
-     * @DateTime 2019-03-30  11:00
+     * @DateTime 2019-04-04  14:18
      */
     public function serialize()
     {
@@ -265,12 +243,10 @@ class AccessData implements IteratorAggregate, ArrayAccess, Serializable, Counta
      *
      * @param string $serialized
      *
-     * @return mixed
-     *
+     * @return mixed|void
      *
      * @author   liuml  <liumenglei0211@163.com>
-     *
-     * @DateTime 2019-03-30  11:05
+     * @DateTime 2019-04-04  14:18
      */
     public function unserialize($serialized)
     {
@@ -300,11 +276,8 @@ class AccessData implements IteratorAggregate, ArrayAccess, Serializable, Counta
      * @param mixed $offset
      * @param mixed $value
      *
-     *
-     *
      * @author   liuml  <liumenglei0211@163.com>
-     *
-     * @DateTime 2019-03-29  15:16
+     * @DateTime 2019-04-04  14:18
      */
     public function offsetSet($offset, $value)
     {
@@ -314,14 +287,12 @@ class AccessData implements IteratorAggregate, ArrayAccess, Serializable, Counta
     /**
      * offsetGet
      *
-     * @param mixed $offset
+     * @param string $offset
      *
      * @return array|mixed|null
      *
-     *
      * @author   liuml  <liumenglei0211@163.com>
-     *
-     * @DateTime 2019-03-29  15:18
+     * @DateTime 2019-04-04  14:18
      */
     public function offsetGet($offset = '')
     {
@@ -333,11 +304,8 @@ class AccessData implements IteratorAggregate, ArrayAccess, Serializable, Counta
      *
      * @param mixed $offset
      *
-     *
-     *
      * @author   liuml  <liumenglei0211@163.com>
-     *
-     * @DateTime 2019-03-29  15:18
+     * @DateTime 2019-04-04  14:18
      */
     public function offsetUnset($offset)
     {
@@ -349,13 +317,10 @@ class AccessData implements IteratorAggregate, ArrayAccess, Serializable, Counta
     /**
      * getIterator
      *
-     *
      * @return ArrayIterator|\Traversable
      *
-     *
      * @author   liuml  <liumenglei0211@163.com>
-     *
-     * @DateTime 2019-03-30  11:59
+     * @DateTime 2019-04-04  14:18
      */
     public function getIterator()
     {
