@@ -16,6 +16,7 @@ use ArrayAccess;
 use Serializable;
 use Countable;
 use ArrayIterator;
+use Traversable;
 
 class AccessData implements IteratorAggregate, ArrayAccess, Serializable, Countable
 {
@@ -104,9 +105,6 @@ class AccessData implements IteratorAggregate, ArrayAccess, Serializable, Counta
 
         while (count($keys) > 1) {
             $key = array_shift($keys);
-            // If the key doesn't exist at this depth, we will just create an empty array
-            // to hold the next value, allowing us to create the arrays to hold final
-            // values at the correct depth. Then we'll keep digging into the array.
             if (!isset($array[$key]) || !is_array($array[$key])) {
                 $array[$key] = [];
             }
@@ -317,7 +315,7 @@ class AccessData implements IteratorAggregate, ArrayAccess, Serializable, Counta
     /**
      * getIterator
      *
-     * @return ArrayIterator|\Traversable
+     * @return ArrayIterator|Traversable
      *
      * @author   liuml  <liumenglei0211@163.com>
      * @DateTime 2019-04-04  14:18
