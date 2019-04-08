@@ -89,9 +89,9 @@ class AccessData implements IteratorAggregate, ArrayAccess, Serializable, Counta
      * @return array|mixed
      *
      * @author   liuml  <liumenglei0211@163.com>
-     * @DateTime 2019-04-04  14:19
+     * @DateTime 2019-04-08  15:54
      */
-    protected function set($key, $value)
+    public function set($key, $value)
     {
         // get items
         $array = &$this->items;
