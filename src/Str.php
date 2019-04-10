@@ -73,6 +73,35 @@ class Str
     }
 
     /**
+     * @static   getRandomInt
+     * 生成唯一值随机数
+     *
+     * @param string $prefix
+     * @param int    $more_entropy
+     *
+     * @return string 该函数默认使用年月日时分秒加6位微妙，为保证随机性最小长度20位，可以添加前缀，可以在尾部添加指定长度的随机数字
+     *
+     * @author   liuml  <liumenglei0211@163.com>
+     * @DateTime 2019-04-10  09:34
+     */
+    public static function getRandomInt($prefix = '', $more_entropy = 0)
+    {
+        list($usec, $sec) = explode(' ', microtime());
+        $str = date('YmdHis', $sec) . mb_substr($usec, 2, 6);
+        if ($more_entropy > 0) {
+            $chars = array( '0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
+            // 在 $chars 中随机取 $length 个数组元素键名
+            $keys = array_rand($chars, $more_entropy);
+            shuffle($keys);
+            for ($i = 0; $i < $more_entropy; $i++) {
+                // 将 $length 个数组元素连接成字符串
+                $str .= $chars[$keys[$i]];
+            }
+        }
+        return $prefix . $str;
+    }
+
+    /**
      * static endsWith
      * Determine if a given string ends with a given substring.
      *
