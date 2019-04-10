@@ -53,6 +53,50 @@ class AccessData implements IteratorAggregate, ArrayAccess, Serializable, Counta
     }
 
     /**
+     * __get
+     *
+     * @param $name
+     *
+     * @return array|mixed|null
+     *
+     * @author   liuml  <liumenglei0211@163.com>
+     * @DateTime 2019-04-10  16:04
+     */
+    public function __get($name)
+    {
+        return $this->get($name);
+    }
+
+    /**
+     * __set
+     *
+     * @param $key
+     * @param $value
+     *
+     * @author   liuml  <liumenglei0211@163.com>
+     * @DateTime 2019-04-10  16:05
+     */
+    public function __set($key, $value)
+    {
+        $this->set($key, $value);
+    }
+
+    /**
+     * __isset
+     *
+     * @param $name
+     *
+     * @return bool
+     *
+     * @author   liuml  <liumenglei0211@163.com>
+     * @DateTime 2019-04-10  16:08
+     */
+    public function __isset($name)
+    {
+        return $this->has($name);
+    }
+
+    /**
      * __toString
      *
      * @return false|string
@@ -62,7 +106,6 @@ class AccessData implements IteratorAggregate, ArrayAccess, Serializable, Counta
      */
     public function __toString()
     {
-        // TODO: Implement __toString() method.
         return $this->toJson();
     }
 
@@ -195,6 +238,21 @@ class AccessData implements IteratorAggregate, ArrayAccess, Serializable, Counta
     }
 
     /**
+     * has
+     *
+     * @param $key
+     *
+     * @return bool
+     *
+     * @author   liuml  <liumenglei0211@163.com>
+     * @DateTime 2019-04-10  16:07
+     */
+    public function has($key)
+    {
+        return !is_null($this->get($key));
+    }
+
+    /**
      * @param array $items
      */
     protected function setItems(array $items): void
@@ -265,7 +323,7 @@ class AccessData implements IteratorAggregate, ArrayAccess, Serializable, Counta
      */
     public function offsetExists($offset)
     {
-        return !is_null($this->get($offset));
+        return $this->has($offset);
     }
 
     /**
