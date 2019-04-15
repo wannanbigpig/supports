@@ -118,8 +118,8 @@ class Log
         $type = 'daily',
         $max_files = 30
     ) {
-        $file    = is_null($file) ? sys_get_temp_dir().'logs/'.$identify.'.log'
-            : $file;
+        $file = is_null($file) ? sys_get_temp_dir().'logs/'.$identify.'.log' : $file;
+
         $handler = $type === 'single' ? new StreamHandler($file, $level)
             : new RotatingFileHandler($file, $max_files, $level);
         $handler->setFormatter(
@@ -130,6 +130,7 @@ class Log
                 true
             )
         );
+
         $logger = new Logger($identify);
         $logger->pushHandler($handler);
 
