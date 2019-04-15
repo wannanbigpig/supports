@@ -14,6 +14,7 @@ use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
+use Exception;
 
 /**
  * @method static void emergency($message, array $context = array())
@@ -36,18 +37,14 @@ class Log
     protected static $logger;
 
     /**
-     * static __callStatic
+     * @static  __callStatic
      *
      * @param $method
      * @param $args
      *
      * @return mixed
      *
-     * @throws \Exception
-     *
-     * @author   liuml  <liumenglei0211@163.com>
-     *
-     * @DateTime 2019-03-27  18:15
+     * @throws Exception
      */
     public static function __callStatic($method, $args)
     {
@@ -62,11 +59,7 @@ class Log
      *
      * @return mixed
      *
-     * @throws \Exception
-     *
-     * @author   liuml  <liumenglei0211@163.com>
-     *
-     * @DateTime 2019-03-27  18:16
+     * @throws Exception
      */
     public function __call($method, $args)
     {
@@ -74,16 +67,11 @@ class Log
     }
 
     /**
-     * static getLogger
-     *
+     * @static  getLogger
      *
      * @return LoggerInterface
      *
-     * @throws \Exception
-     *
-     * @author   liuml  <liumenglei0211@163.com>
-     *
-     * @DateTime 2019-03-27  18:18
+     * @throws Exception
      */
     public static function getLogger()
     {
@@ -91,15 +79,9 @@ class Log
     }
 
     /**
-     * static setLogger
+     * @static  setLogger
      *
-     * @param LoggerInterface $logger
-     *
-     *
-     *
-     * @author   liuml  <liumenglei0211@163.com>
-     *
-     * @DateTime 2019-03-27  18:18
+     * @param  LoggerInterface  $logger
      */
     public static function setLogger(LoggerInterface $logger)
     {
@@ -107,15 +89,9 @@ class Log
     }
 
     /**
-     * static hasLogger
-     *
+     * @static  hasLogger
      *
      * @return bool
-     *
-     *
-     * @author   liuml  <liumenglei0211@163.com>
-     *
-     * @DateTime 2019-03-27  18:19
      */
     public static function hasLogger()
     {
@@ -123,31 +99,40 @@ class Log
     }
 
     /**
-     * static createLogger
+     * @static  createLogger
      *
-     * @param null   $file
-     * @param string $identify
-     * @param int    $level
-     * @param string $type
-     * @param int    $max_files
+     * @param  null  $file
+     * @param  string  $identify
+     * @param  int  $level
+     * @param  string  $type
+     * @param  int  $max_files
      *
      * @return Logger
      *
-     * @throws \Exception
-     *
-     * @author   liuml  <liumenglei0211@163.com>
-     *
-     * @DateTime 2019-03-27  18:19
+     * @throws Exception
      */
-    public static function createLogger($file = NULL, $identify = 'wannanbigpig.supports', $level = Logger::DEBUG, $type = 'daily', $max_files = 30)
-    {
-        $file    = is_null($file) ? sys_get_temp_dir() . 'logs/' . $identify . '.log' : $file;
-        $handler = $type === 'single' ? new StreamHandler($file, $level) : new RotatingFileHandler($file, $max_files, $level);
+    public static function createLogger(
+        $file = null,
+        $identify = 'wannanbigpig.supports',
+        $level = Logger::DEBUG,
+        $type = 'daily',
+        $max_files = 30
+    ) {
+        $file    = is_null($file) ? sys_get_temp_dir().'logs/'.$identify.'.log'
+            : $file;
+        $handler = $type === 'single' ? new StreamHandler($file, $level)
+            : new RotatingFileHandler($file, $max_files, $level);
         $handler->setFormatter(
-            new LineFormatter("%datetime% > %channel%.%level_name% > %message% %context% %extra%\r\n", NULL, false, true)
+            new LineFormatter(
+                "%datetime% > %channel%.%level_name% > %message% %context% %extra%\r\n",
+                null,
+                false,
+                true
+            )
         );
         $logger = new Logger($identify);
         $logger->pushHandler($handler);
+
         return $logger;
     }
 }
