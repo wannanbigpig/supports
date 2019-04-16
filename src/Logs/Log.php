@@ -124,7 +124,7 @@ class Log
             : new RotatingFileHandler($file, $max_files, $level);
         $handler->setFormatter(
             new LineFormatter(
-                "%datetime% > %channel% [ %level_name% ] > %message% %context% %extra%\r\n",
+                "%datetime% > %channel% [ %level_name% ] > %message% %context% %extra%\r\n\n",
                 null,
                 false,
                 true
