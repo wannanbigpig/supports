@@ -253,9 +253,9 @@ class AccessData implements IteratorAggregate, ArrayAccess, Serializable, Counta
     }
 
     /**
-     * @param array $items
+     * @param  array  $items
      */
-    protected function setItems(array $items): void
+    protected function setItems(array $items)
     {
         $this->items = $items;
     }
