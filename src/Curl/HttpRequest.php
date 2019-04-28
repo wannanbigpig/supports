@@ -17,12 +17,14 @@ trait HttpRequest
 
     /**
      * Http client
+     *
      * @var null | Client
      */
-    protected $httpClient = NULL;
+    protected $httpClient = null;
 
     /**
      * Http client options
+     *
      * @var array
      */
     protected $httpOptions = [];
@@ -30,9 +32,9 @@ trait HttpRequest
     /**
      * get
      *
-     * @param string $uri
-     * @param array  $query
-     * @param array  $headers
+     * @param  string  $uri
+     * @param  array   $query
+     * @param  array   $headers
      *
      * @return mixed
      *
@@ -42,7 +44,7 @@ trait HttpRequest
      */
     public function get(string $uri, $query = [], $headers = [])
     {
-        return $this->request('POST', $uri, [
+        return $this->request('get', $uri, [
             'headers' => $headers,
             'query'   => $query,
         ]);
@@ -50,21 +52,27 @@ trait HttpRequest
 
     /**
      * post
-     * @param string $uri
-     * @param array  $data
-     * @param array  $options
+     *
+     * @param  string  $uri
+     * @param  mixed   $data
+     * @param  array   $options
+     *
      * @return array|string
      * @author   liuml  <liumenglei0211@163.com>
      * @DateTime 2019-03-27  10:59
      */
-    public function post(string $uri, $data = [], $options = [])
+    public function post(string $uri, $data, array $options = [])
     {
-        if (!is_array($data)) {
-            $options['body'] = $data;
-        } else {
-            $options['form_params'] = $data;
+        $request_type = 'form_params';
+        if (isset($options['request_type']) && !empty($options['request_type'])) {
+            $request_type = $options['request_type'];
+            unset($options['request_type']);
         }
-        return $this->request('POST', $uri, $options);
+        $datas = [
+            $request_type => $data,
+        ];
+
+        return $this->request('POST', $uri, array_merge($datas, $options));
     }
 
     /**
@@ -106,7 +114,7 @@ trait HttpRequest
     /**
      * setHttpClient
      *
-     * @param Client $client
+     * @param  Client  $client
      *
      * @return $this
      *
@@ -123,9 +131,9 @@ trait HttpRequest
     /**
      * request
      *
-     * @param       $method
-     * @param       $uri
-     * @param array $options
+     * @param         $method
+     * @param         $uri
+     * @param  array  $options
      *
      * @return mixed
      *
@@ -141,7 +149,7 @@ trait HttpRequest
     /**
      * unwrapResponse
      *
-     * @param ResponseInterface $response
+     * @param  ResponseInterface  $response
      *
      * @return mixed|string
      *
@@ -151,13 +159,6 @@ trait HttpRequest
      */
     public function unwrapResponse(ResponseInterface $response)
     {
-        // $contentType = $response->getHeaderLine('Content-Type');
-        $contents    = $response->getBody()->getContents();
-        /*if (false !== stripos($contentType, 'json') || stripos($contentType, 'javascript')) {
-            return json_decode($contents, true);
-        } elseif (false !== stripos($contentType, 'xml')) {
-            return json_decode(json_encode(simplexml_load_string($contents, 'SimpleXMLElement', LIBXML_NOCDATA), JSON_UNESCAPED_UNICODE), true);
-        }*/
-        return $contents;
+        return $response->getBody()->getContents();
     }
 }
