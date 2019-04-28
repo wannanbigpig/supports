@@ -33,8 +33,7 @@ trait HttpRequest
      * get
      *
      * @param  string  $uri
-     * @param  array   $query
-     * @param  array   $headers
+     * @param  array   $options
      *
      * @return mixed
      *
@@ -42,12 +41,9 @@ trait HttpRequest
      *
      * @DateTime 2019-04-03  11:38
      */
-    public function get(string $uri, $query = [], $headers = [])
+    public function get(string $uri, $options = [])
     {
-        return $this->request('get', $uri, [
-            'headers' => $headers,
-            'query'   => $query,
-        ]);
+        return $this->request('get', $uri, $options);
     }
 
     /**
