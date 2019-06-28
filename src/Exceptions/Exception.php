@@ -1,27 +1,26 @@
 <?php
 
+/*
+ * This file is part of the wannanbigpig/supports.
+ *
+ * (c) wannanbigpig <liuml0211@gmail.com>
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace WannanBigPig\Supports\Exceptions;
 
+/**
+ * Class Exception
+ *
+ * @author   liuml  <liumenglei0211@163.com>
+ * @DateTime 2019-06-19  15:17
+ *
+ * @package  WannanBigPig\Supports\Exceptions
+ */
 class Exception extends \Exception
 {
-    /**
-     * 未知异常
-     * @var int
-     */
-    const UNKNOWN_ERROR = 99999;
-
-    /**
-     * 业务异常
-     * @var int
-     */
-    const BUSINESS_ERROR = 10001;
-
-    /**
-     * 应用异常
-     * @var int
-     */
-    const APPLICATION_ERROR = 80001;
-
     /**
      * Raw error info.
      *
@@ -31,14 +30,15 @@ class Exception extends \Exception
 
     /**
      * Exception constructor.
+     *
      * @param string $message
-     * @param array  $raw
-     * @param int    $code
+     * @param        $code
+     * @param        $raw
      */
-    public function __construct($message = '', $raw = [], $code = self::UNKNOWN_ERROR)
+    public function __construct($message = '', $code = 0, $raw = null)
     {
-        $message = $message === '' ? 'Unknown Error' : $message;
-        $this->raw = is_array($raw) ? $raw : [$raw];
+        $message = $message ?: 'Unknown Error';
+        $this->raw = $raw;
 
         parent::__construct($message, intval($code));
     }

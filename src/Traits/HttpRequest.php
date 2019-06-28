@@ -30,48 +30,6 @@ trait HttpRequest
     protected $httpOptions = [];
 
     /**
-     * get
-     *
-     * @param  string  $uri
-     * @param  array   $options
-     *
-     * @return mixed
-     *
-     * @author   liuml  <liumenglei0211@163.com>
-     *
-     * @DateTime 2019-04-03  11:38
-     */
-    public function get(string $uri, $options = [])
-    {
-        return $this->request('get', $uri, $options);
-    }
-
-    /**
-     * post
-     *
-     * @param  string  $uri
-     * @param  mixed   $data
-     * @param  array   $options
-     *
-     * @return array|string
-     * @author   liuml  <liumenglei0211@163.com>
-     * @DateTime 2019-03-27  10:59
-     */
-    public function post(string $uri, $data, array $options = [])
-    {
-        $request_type = 'form_params';
-        if (isset($options['request_type']) && !empty($options['request_type'])) {
-            $request_type = $options['request_type'];
-            unset($options['request_type']);
-        }
-        $datas = [
-            $request_type => $data,
-        ];
-
-        return $this->request('POST', $uri, array_merge($datas, $options));
-    }
-
-    /**
      * getHttpClient
      *
      * @return Client|null

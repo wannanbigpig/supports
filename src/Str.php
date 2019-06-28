@@ -1,27 +1,38 @@
 <?php
-/**
- * String.php
+
+/*
+ * This file is part of the wannanbigpig/supports.
  *
- * Created by PhpStorm.
+ * (c) wannanbigpig <liuml0211@gmail.com>
  *
- * author: liuml  <liumenglei0211@163.com>
- *
- * DateTime: 2019-04-02  10:37
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace WannanBigPig\Supports;
 
+use WannanBigPig\Supports\Exceptions\RuntimeException;
+
+/**
+ * Class Str
+ *
+ * @author   liuml  <liumenglei0211@163.com>
+ * @DateTime 2019-06-25  10:17
+ *
+ * @package  WannanBigPig\Supports
+ */
 class Str
 {
 
     /**
      * This is a cache of case strings
+     *
      * @var array
      */
     protected static $studlyCache = [];
 
     /**
-     * static studly
+     * studly
      *
      * @param $value
      *
@@ -45,7 +56,7 @@ class Str
     }
 
     /**
-     * static getRandomString
+     * getRandomString
      *
      * @param int $length
      *
@@ -56,53 +67,84 @@ class Str
      */
     public static function getRandomString($length = 8)
     {
-        // 字符集，可任意添加你需要的字符
-        $chars = array(
-            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-        );
-        // 在 $chars 中随机取 $length 个数组元素键名
-        $keys = array_rand($chars, $length);
-        shuffle($keys);
-        // print_r($keys);
-        $randomString = '';
-        for ($i = 0; $i < $length; $i++) {
-            // 将 $length 个数组元素连接成字符串
-            $randomString .= $chars[$keys[$i]];
-        }
-        return $randomString;
+        $pool = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+        return substr(str_shuffle(str_repeat($pool, $length)), 0, $length);
     }
 
     /**
-     * @static   getRandomInt
-     * 生成唯一值随机数
+     * Generate a more truly "random" alpha-numeric string.
      *
-     * @param string $prefix
-     * @param int    $more_entropy
+     * @param int $length
      *
-     * @return string 该函数默认使用年月日时分秒加6位微妙，为保证随机性最小长度20位，可以添加前缀，可以在尾部添加指定长度的随机数字
+     * @return string
      *
-     * @author   liuml  <liumenglei0211@163.com>
-     * @DateTime 2019-04-10  09:34
+     * @throws \WannanBigPig\Supports\Exceptions\RuntimeException
      */
-    public static function getRandomInt($prefix = '', $more_entropy = 0)
+    public static function random($length = 16)
+    {
+        $string = '';
+
+        while (($len = strlen($string)) < $length) {
+            $size = $length - $len;
+
+            $bytes = static::randomBytes($size);
+
+            $string .= substr(str_replace(['/', '+', '='], '', base64_encode($bytes)), 0, $size);
+        }
+
+        return $string;
+    }
+
+
+    /**
+     * Get random integers.
+     *
+     * @param int  $length Random integer length
+     * @param bool $date   Does it include subtle time? Boolean value
+     *
+     * @return bool|string
+     */
+    public static function getRandomInt($length = 16, $date = false)
     {
         list($usec, $sec) = explode(' ', microtime());
-        $str = date('YmdHis', $sec) . mb_substr($usec, 2, 6);
-        if ($more_entropy > 0) {
-            $chars = array( '0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
-            // 在 $chars 中随机取 $length 个数组元素键名
-            $keys = array_rand($chars, $more_entropy);
-            shuffle($keys);
-            for ($i = 0; $i < $more_entropy; $i++) {
-                // 将 $length 个数组元素连接成字符串
-                $str .= $chars[$keys[$i]];
-            }
+        $microsecond = date('YmdHis', $sec).mb_substr($usec, 2, 6);
+        $integer = '0123456789';
+        $str = substr(str_shuffle($microsecond.$integer), 0, $length);
+        if ($date === true) {
+            return $microsecond.$str;
         }
-        return $prefix . $str;
+
+        return $str;
     }
 
     /**
-     * static endsWith
+     * Generate a more truly "random" bytes..
+     *
+     * @param int $length
+     *
+     * @return string
+     *
+     * @throws \WannanBigPig\Supports\Exceptions\RuntimeException
+     * @throws \Exception
+     */
+    public static function randomBytes($length = 16)
+    {
+        if (function_exists('random_bytes')) {
+            $bytes = random_bytes($length);
+        } elseif (function_exists('openssl_random_pseudo_bytes')) {
+            $bytes = openssl_random_pseudo_bytes($length, $strong);
+            if (false === $bytes || false === $strong) {
+                throw new RuntimeException('Unable to generate random string.');
+            }
+        } else {
+            throw new RuntimeException('OpenSSL extension is required for PHP 5 users.');
+        }
+
+        return $bytes;
+    }
+
+    /**
      * Determine if a given string ends with a given substring.
      *
      * @param $haystack
@@ -115,10 +157,10 @@ class Str
      */
     public static function endsWith(string $haystack, string $needles)
     {
-
-        if (substr($haystack, -strlen($needles)) === (string) $needles) {
+        if (substr($haystack, -(strlen($needles))) === (string)$needles) {
             return true;
         }
+
         return false;
     }
 }
