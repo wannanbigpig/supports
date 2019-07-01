@@ -19,7 +19,7 @@ public function log()
 // 测试HttpClient
 public function query()
 {
-    echo $this->get('http://api.juheapi.com/japi/toh', [
+    echo $this->request('POST','http://api.juheapi.com/japi/toh', [
         'key'   => '********',
         'v'     => '1.0',
         'month' => '3',
