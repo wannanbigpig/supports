@@ -10,7 +10,8 @@
 namespace WannanBigPig\Supports\Curl;
 
 use GuzzleHttp\Client;
-use Psr\Http\Message\ResponseInterface;
+use GuzzleHttp\ClientInterface;
+use GuzzleHttp\HandlerStack;
 
 trait HttpRequest
 {
@@ -28,6 +29,50 @@ trait HttpRequest
      * @var array
      */
     protected $httpOptions = [];
+
+    /**
+     * @var \GuzzleHttp\HandlerStack
+     */
+    protected $handlerStack;
+
+    /**
+     * @var array
+     */
+    protected $middlewares = [];
+
+    /**
+     * @var callable
+     */
+    protected $handler = null;
+
+    /**
+     * @var array
+     */
+    protected $defaults = [
+        'curl' => [
+            CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
+        ],
+    ];
+
+    /**
+     * Set guzzle default settings.
+     *
+     * @param array $defaults
+     */
+    public function setDefaultOptions($defaults = [])
+    {
+        $this->defaults = $defaults;
+    }
+
+    /**
+     * Return current guzzle default settings.
+     *
+     * @return array
+     */
+    public function getDefaultOptions(): array
+    {
+        return $this->defaults;
+    }
 
     /**
      * getHttpClient
@@ -48,71 +93,171 @@ trait HttpRequest
     }
 
     /**
-     * getOptions
+     * setHttpClient.
+     *
+     * @param \GuzzleHttp\ClientInterface $client
+     *
+     * @return $this
+     */
+    public function setHttpClient(ClientInterface $client)
+    {
+        $this->httpClient = $client;
+
+        return $this;
+    }
+
+    /**
+     * getOptions.
      *
      * @return array
-     *
-     * @author   liuml  <liumenglei0211@163.com>
-     *
-     * @DateTime 2019-04-03  11:37
      */
     public function getOptions()
     {
         return array_merge([
-            'base_uri'        => property_exists($this, 'baseUri') ? $this->baseUri : '',
-            'timeout'         => property_exists($this, 'timeout') ? $this->timeout : 6.0,
+            'base_uri' => property_exists($this, 'baseUri') ? $this->baseUri : '',
+            'timeout' => property_exists($this, 'timeout') ? $this->timeout : 6.0,
             'connect_timeout' => property_exists($this, 'connectTimeout') ? $this->connectTimeout : 6.0,
         ], $this->httpOptions);
     }
 
     /**
-     * setHttpClient
+     * setOptions.
      *
-     * @param  Client  $client
+     * @param array $options
+     */
+    public function setOptions(array $options = [])
+    {
+        $this->httpOptions = $options;
+    }
+
+
+    /**
+     * request.
+     *
+     * @param       $method
+     * @param       $url
+     * @param array $options
+     *
+     * @return mixed|\Psr\Http\Message\ResponseInterface
+     *
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function request($method, $url, $options = [])
+    {
+        $method = strtoupper($method);
+        $options = array_merge($this->getDefaultOptions(), $options, ['handler' => $this->getHandlerStack()]);
+
+        $this->fixJsonIssue($options);
+
+        $response = $this->getHttpClient()->request($method, $url, $options);
+        $response->getBody()->rewind();
+
+        return $response;
+    }
+
+    /**
+     * Add a middleware.
+     *
+     * @param callable    $middleware
+     * @param string|null $name
      *
      * @return $this
-     *
-     * @author   liuml  <liumenglei0211@163.com>
-     *
-     * @DateTime 2019-04-03  11:37
      */
-    public function setHttpClient(Client $client)
+    public function pushMiddleware(callable $middleware, string $name = null)
     {
-        $this->httpClient = $client;
+        if (!is_null($name)) {
+            $this->middlewares[$name] = $middleware;
+        } else {
+            array_push($this->middlewares, $middleware);
+        }
+
         return $this;
     }
 
     /**
-     * request
+     * @param \GuzzleHttp\HandlerStack $handlerStack
      *
-     * @param         $method
-     * @param         $uri
-     * @param  array  $options
-     *
-     * @return mixed
-     *
-     * @author   liuml  <liumenglei0211@163.com>
-     *
-     * @DateTime 2019-04-03  11:37
+     * @return $this
      */
-    public function request($method, $uri, $options = [])
+    public function setHandlerStack(HandlerStack $handlerStack)
     {
-        return $this->unwrapResponse($this->getHttpClient()->{$method}($uri, $options));
+        $this->handlerStack = $handlerStack;
+
+        return $this;
     }
 
     /**
-     * unwrapResponse
+     * Build a handler stack.
      *
-     * @param  ResponseInterface  $response
-     *
-     * @return mixed|string
-     *
-     * @author   liuml  <liumenglei0211@163.com>
-     *
-     * @DateTime 2019-04-03  11:38
+     * @return \GuzzleHttp\HandlerStack
      */
-    public function unwrapResponse(ResponseInterface $response)
+    public function getHandlerStack(): HandlerStack
     {
-        return $response->getBody()->getContents();
+        if ($this->handlerStack) {
+            return $this->handlerStack;
+        }
+
+        $this->handlerStack = HandlerStack::create($this->getGuzzleHandler());
+
+        foreach ($this->middlewares as $name => $middleware) {
+            $this->handlerStack->push($middleware, $name);
+        }
+
+        return $this->handlerStack;
+    }
+
+    /**
+     * Return all middlewares.
+     *
+     * @return array
+     */
+    public function getMiddlewares(): array
+    {
+        return $this->middlewares;
+    }
+
+    /**
+     * @param array $options
+     *
+     * @return array
+     */
+    protected function fixJsonIssue(array $options): array
+    {
+        if (isset($options['json']) && is_array($options['json'])) {
+            $options['headers'] = array_merge($options['headers'] ?? [], ['Content-Type' => 'application/json']);
+
+            if (empty($options['json'])) {
+                $options['body'] = \GuzzleHttp\json_encode($options['json'], JSON_FORCE_OBJECT);
+            } else {
+                $options['body'] = \GuzzleHttp\json_encode($options['json'], JSON_UNESCAPED_UNICODE);
+            }
+
+            unset($options['json']);
+        }
+
+        return $options;
+    }
+
+    /**
+     * Get guzzle handler.
+     *
+     * @return mixed
+     */
+    public function getGuzzleHandler()
+    {
+        return $this->handler ?: \GuzzleHttp\choose_handler();
+    }
+
+    /**
+     * Set guzzle handler.
+     *
+     * @param $handler
+     */
+    public function setGuzzleHandler(callable $handler)
+    {
+        $this->handler = $handler;
     }
 }
+
+
+
