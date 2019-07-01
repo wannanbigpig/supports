@@ -11,21 +11,28 @@
 
 namespace WannanBigPig\Supports;
 
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Class Events
  *
- * @method static Event dispatch($eventName, Event $event = NULL) Dispatches an event to all registered listeners
- * @method static array getListeners($eventName = NULL) Gets the listeners of a specific event or all listeners sorted by descending priority.
- * @method static int|null getListenerPriority($eventName, $listener) Gets the listener priority for a specific event.
- * @method static bool hasListeners($eventName = NULL) Checks whether an event has any registered listeners.
- * @method static addListener($eventName, $listener, $priority = 0) Adds an event listener that listens on the specified events.
- * @method static removeListener($eventName, $listener) Removes an event listener from the specified events.
- * @method static addSubscriber(EventSubscriberInterface $subscriber) Adds an event subscriber.
+ * @method static dispatch($event)
+ * @method static getListeners($eventName = null)
+ * @method static getListenerPriority($eventName, $listener)
+ * @method static hasListeners($eventName = null)
+ * @method static addListener($eventName, $listener, $priority = 0)
+ * @method static removeListener($eventName, $listener)
+ * @method static addSubscriber(EventSubscriberInterface $subscriber)
  * @method static removeSubscriber(EventSubscriberInterface $subscriber)
+ * @method static callListeners(iterable $listeners, string $eventName, $event)
+ * @method static sortListeners(string $eventName)
+ * @method static optimizeListeners(string $eventName)
+ *
+ * @author   liuml  <liumenglei0211@163.com>
+ * @DateTime 2019-06-27  11:47
+ *
+ * @package  WannanBigPig\Supports
  */
 class Events
 {
@@ -37,17 +44,12 @@ class Events
     protected static $dispatcher;
 
     /**
-     * static __callStatic
+     * @static  __callStatic.
      *
      * @param $method
      * @param $args
      *
      * @return mixed
-     *
-     *
-     * @author   liuml  <liumenglei0211@163.com>
-     *
-     * @DateTime 2019-04-01  16:34
      */
     public static function __callStatic($method, $args)
     {
@@ -55,15 +57,12 @@ class Events
     }
 
     /**
-     * __call
+     * __call.
      *
      * @param $method
      * @param $args
      *
      * @return mixed
-     *
-     * @author   liuml  <liumenglei0211@163.com>
-     * @DateTime 2019-04-03  16:58
      */
     public function __call($method, $args)
     {
@@ -71,12 +70,9 @@ class Events
     }
 
     /**
-     * static getDispatcher
+     * @static  getDispatcher.
      *
-     * @return EventDispatcher
-     *
-     * @author   liuml  <liumenglei0211@163.com>
-     * @DateTime 2019-04-03  16:58
+     * @return \Symfony\Component\EventDispatcher\EventDispatcher
      */
     public static function getDispatcher(): EventDispatcher
     {
@@ -88,12 +84,9 @@ class Events
     }
 
     /**
-     * static createDispatcher
+     * @static  createDispatcher.
      *
-     * @return EventDispatcher
-     *
-     * @author   liuml  <liumenglei0211@163.com>
-     * @DateTime 2019-04-03  16:58
+     * @return \Symfony\Component\EventDispatcher\EventDispatcher
      */
     public static function createDispatcher(): EventDispatcher
     {
@@ -101,12 +94,9 @@ class Events
     }
 
     /**
-     * static setDispatcher
+     * @static  setDispatcher.
      *
-     * @param EventDispatcher $dispatcher
-     *
-     * @author   liuml  <liumenglei0211@163.com>
-     * @DateTime 2019-04-03  16:58
+     * @param \Symfony\Component\EventDispatcher\EventDispatcher $dispatcher
      */
     public static function setDispatcher(EventDispatcher $dispatcher)
     {
