@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace WannanBigPig\Supports\Curl;
+namespace WannanBigPig\Supports\Traits;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
