@@ -85,9 +85,9 @@ trait HttpRequest
      *
      * @DateTime 2019-04-03  11:37
      */
-    public function getHttpClient()
+    public function getHttpClient():ClientInterface
     {
-        if (is_null($this->httpClient)) {
+        if (!($this->httpClient instanceof ClientInterface)) {
             $this->httpClient = new Client($this->getOptions());
         }
 
@@ -260,6 +260,3 @@ trait HttpRequest
         $this->handler = $handler;
     }
 }
-
-
-

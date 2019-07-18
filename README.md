@@ -7,24 +7,33 @@ composer require wannanbigpig/supports
 ```
 
 # 使用说明
+未做说明处请参考源码使用
 ```php
-// public static function createLogger($file = NULL, $identify = 'wannanbigpig.supports', $level = Logger::DEBUG, $type = 'daily', $max_files = 30) 方法配置日志路径等
-
 // 测试日志
 public function log()
 {
-    Log::info('测试日志');
+    $log = new log([
+       'driver' => 'single',
+       'level' => 'info',
+       'format' => "%datetime% > %channel% [ %level_name% ] > %message% %context% %extra%\r\n\n",
+       'path' => '/tmp/wannanbigpig.alipay.log',
+    ]);
+    $log->info('测试日志');
 }
 
 // 测试HttpClient
-public function query()
-{
-    echo $this->request('POST','http://api.juheapi.com/japi/toh', [
-        'key'   => '********',
-        'v'     => '1.0',
-        'month' => '3',
-        'day'   => '28',
-    ]);
+class foo {
+    use HttpRequest;
+    
+    public function query()
+    {
+         echo $this->request('POST','http://api.juheapi.com/japi/toh', [
+            'key'   => '********',
+            'v'     => '1.0',
+            'month' => '3',
+            'day'   => '28',
+        ]);
+    }
 }
 
 // 测试Config,支持用点获取多维数组，接口 IteratorAggregate, ArrayAccess, Serializable, Countable
