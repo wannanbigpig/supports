@@ -18,18 +18,34 @@ use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 
 /**
- * @method static void emergency($message, array $context = [])
- * @method static void alert($message, array $context = [])
- * @method static void critical($message, array $context = [])
- * @method static void error($message, array $context = [])
- * @method static void warning($message, array $context = [])
- * @method static void notice($message, array $context = [])
- * @method static void info($message, array $context = [])
- * @method static void debug($message, array $context = [])
- * @method static void log($message, array $context = [])
+ * @method mixed emergency($message, array $context = [])
+ * @method mixed alert($message, array $context = [])
+ * @method mixed critical($message, array $context = [])
+ * @method mixed error($message, array $context = [])
+ * @method mixed warning($message, array $context = [])
+ * @method mixed notice($message, array $context = [])
+ * @method mixed info($message, array $context = [])
+ * @method mixed debug($message, array $context = [])
+ * @method mixed log($message, array $context = [])
  */
 class Log
 {
+    /**
+     * The Log levels.
+     *
+     * @var array
+     */
+    protected $levels = [
+        'debug' => Logger::DEBUG,
+        'info' => Logger::INFO,
+        'notice' => Logger::NOTICE,
+        'warning' => Logger::WARNING,
+        'error' => Logger::ERROR,
+        'critical' => Logger::CRITICAL,
+        'alert' => Logger::ALERT,
+        'emergency' => Logger::EMERGENCY,
+    ];
+
     /**
      * Logger instance.
      *
@@ -38,17 +54,22 @@ class Log
     protected $logger;
 
     /**
-     * @var self
-     */
-    private static $instance;
-
-    /**
      * @var array
      */
     public $config = [];
 
     /**
-     * @static  __callStatic.
+     * Log constructor.
+     *
+     * @param array $config
+     */
+    public function __construct($config = [])
+    {
+        $this->config = $config;
+    }
+
+    /**
+     * __call.
      *
      * @param $method
      * @param $args
@@ -57,11 +78,9 @@ class Log
      *
      * @throws \Exception
      */
-    public static function __callStatic($method, $args)
+    public function __call($method, $args)
     {
-        self::$instance ?: self::$instance = new static();
-
-        return forward_static_call_array([self::$instance->getLogger(), $method], $args);
+        return call_user_func_array([$this->getLogger(), $method], $args);
     }
 
     /**
@@ -87,10 +106,14 @@ class Log
      * setLogger.
      *
      * @param \Psr\Log\LoggerInterface $logger
+     *
+     * @return $this
      */
     public function setLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
+
+        return $this;
     }
 
     /**
@@ -104,29 +127,54 @@ class Log
     }
 
     /**
+     * Register a custom driver creator Closure.
+     *
+     * @param string   $driver
+     * @param \Closure $callback
+     *
+     * @return $this
+     */
+    public function extend(\Closure $callback)
+    {
+        $this->setLogger($callback->bindTo($this, $this));
+
+        return $this;
+    }
+
+    public function getDriver()
+    {
+    }
+
+    /**
      * createLogger.
      *
      * @return \Monolog\Logger
      */
     public function createLogger()
     {
-        // $file = null, $identify = 'wannanbigpig.supports', $level = Logger::DEBUG, $handler = 'daily', $max_files = 30
-        $file = is_null($file) ? sys_get_temp_dir().'logs/'.$identify.'.log' : $file;
+        $handler = $this->config['driver'];
+        $handler = call_user_func([$this, $handler.'Driver']);
+        $handler->setFormatter($this->formatter());
 
-        $handler = call_user_func([static::class, $handler]);
-        $handler->setFormatter(
-            new LineFormatter(
-                "%datetime% > %channel% [ %level_name% ] > %message% %context% %extra%\r\n\n",
-                null,
-                false,
-                true
-            )
-        );
-
-        $logger = new Logger($identify);
+        $logger = new Logger($this->config['identify'] ?? 'wannanbigpig.support');
         $logger->pushHandler($handler);
 
         return $logger;
+    }
+
+    /**
+     * Get a Monolog formatter instance..
+     *
+     * @return \Monolog\Formatter\LineFormatter
+     */
+    public function formatter()
+    {
+        return new LineFormatter(
+            $this->config['format'] ?? null,
+            null,
+            true,
+            true
+        );
     }
 
     /**
@@ -136,9 +184,9 @@ class Log
      *
      * @throws \Exception
      */
-    public function single()
+    public function singleDriver()
     {
-        return new StreamHandler($this->config['file'], $this->config['level']);
+        return new StreamHandler($this->config['path'], $this->level());
     }
 
     /**
@@ -146,8 +194,24 @@ class Log
      *
      * @return \Monolog\Handler\RotatingFileHandler
      */
-    public function daily()
+    public function dailyDriver()
     {
-        return new RotatingFileHandler($this->config['file'], $this->config['max_files'], $this->config['level']);
+        return new RotatingFileHandler($this->config['path'], $this->config['day'], $this->level());
+    }
+
+    /**
+     *  Parse the string level into a Monolog constant.
+     *
+     * @return mixed
+     */
+    protected function level()
+    {
+        $level = $this->config['level'] ?? 'debug';
+
+        if (isset($this->levels[$level])) {
+            return $this->levels[$level];
+        }
+
+        throw new \InvalidArgumentException('Invalid log level.');
     }
 }

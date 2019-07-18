@@ -11,14 +11,13 @@
 namespace WannanBigPig\Supports\Exceptions;
 
 /**
- * Class RuntimeException
+ * Class InvalidArgumentException
  *
  * @author   liuml  <liumenglei0211@163.com>
- * @DateTime 2019-07-17  16:19
+ * @DateTime 2019-07-17  16:18
  *
  * @package  WannanBigPig\Supports\Exceptions
  */
-class RuntimeException extends Exception
+class InvalidArgumentException extends Exception
 {
-
 }
