@@ -14,6 +14,7 @@ namespace WannanBigPig\Supports\Traits;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\HandlerStack;
+use Psr\Http\Message\ResponseInterface;
 
 trait HttpRequest
 {
@@ -85,7 +86,7 @@ trait HttpRequest
      *
      * @DateTime 2019-04-03  11:37
      */
-    public function getHttpClient():ClientInterface
+    public function getHttpClient(): ClientInterface
     {
         if (!($this->httpClient instanceof ClientInterface)) {
             $this->httpClient = new Client($this->getOptions());
@@ -140,11 +141,11 @@ trait HttpRequest
      * @param       $url
      * @param array $options
      *
-     * @return mixed|\Psr\Http\Message\ResponseInterface
+     * @return \Psr\Http\Message\ResponseInterface
      *
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function request($method, $url, $options = [])
+    public function request($method, $url, $options = []): ResponseInterface
     {
         $method = strtoupper($method);
         $options = array_merge($this->getDefaultOptions(), $options, ['handler' => $this->getHandlerStack()]);
