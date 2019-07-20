@@ -33,10 +33,10 @@ trait ResponseCastable
      *
      * @throws \WannanBigPig\Supports\Exceptions\InvalidArgumentException
      */
-    protected function castResponseToType(ResponseInterface $return, Response $response, $type = 'array')
+    protected function castResponseToType(ResponseInterface $return, Response $response, $type = null)
     {
         $return = $response::buildFromPsrResponse($return);
-        switch ($type) {
+        switch ($type ?? 'array') {
             case 'collection':
                 return $return->toCollection();
             case 'array':
