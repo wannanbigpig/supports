@@ -127,25 +127,6 @@ class Log
     }
 
     /**
-     * Register a custom driver creator Closure.
-     *
-     * @param string   $driver
-     * @param \Closure $callback
-     *
-     * @return $this
-     */
-    public function extend(\Closure $callback)
-    {
-        $this->setLogger($callback->bindTo($this, $this));
-
-        return $this;
-    }
-
-    public function getDriver()
-    {
-    }
-
-    /**
      * createLogger.
      *
      * @return \Monolog\Logger
@@ -206,7 +187,7 @@ class Log
      */
     protected function level()
     {
-        $level = $this->config['level'] ?? 'debug';
+        $level = strtolower($this->config['level'] ?? 'debug');
 
         if (isset($this->levels[$level])) {
             return $this->levels[$level];

@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of the wannanbigpig/supports.
  *
@@ -16,6 +15,12 @@ use GuzzleHttp\ClientInterface;
 use GuzzleHttp\HandlerStack;
 use Psr\Http\Message\ResponseInterface;
 
+/**
+ * Trait HttpRequest
+ *
+ * @author   liuml  <liumenglei0211@163.com>
+ * @DateTime 2019-07-19  17:10
+ */
 trait HttpRequest
 {
 
