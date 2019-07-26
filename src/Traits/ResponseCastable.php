@@ -25,23 +25,18 @@ trait ResponseCastable
     /**
      * castResponseToType.
      *
-     * @param \Psr\Http\Message\ResponseInterface  $return
-     * @param \WannanBigPig\Supports\Http\Response $response
-     * @param string                               $type
-     * @param bool                                 $is_build
+     * @param \Psr\Http\Message\ResponseInterface|null $response
+     * @param string|null                              $type
+     * @param bool                                     $is_build
      *
-     * @return array|object|\WannanBigPig\Supports\Collection|\WannanBigPig\Supports\Http\Response
+     * @return array|object|\Psr\Http\Message\ResponseInterface|\WannanBigPig\Supports\Collection|\WannanBigPig\Supports\Http\Response
      *
      * @throws \WannanBigPig\Supports\Exceptions\InvalidArgumentException
      */
-    protected function castResponseToType(
-        ResponseInterface $return,
-        string $type = null,
-        Response $response = null,
-        $is_build = true
-    ) {
+    protected function castResponseToType(ResponseInterface $response = null, string $type = null, bool $is_build = false)
+    {
         if ($is_build) {
-            $response = is_null($response) ? Response::buildFromPsrResponse($return) : $response::buildFromPsrResponse($return);
+            $response = Response::buildFromPsrResponse($response);
         }
 
         switch ($type ?? 'array') {

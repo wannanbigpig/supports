@@ -19,7 +19,7 @@ use WannanBigPig\Supports\Collection;
  * @author   liuml  <liumenglei0211@163.com>
  * @DateTime 2019-07-20  14:11
  */
-abstract class Response extends \GuzzleHttp\Psr7\Response
+class Response extends \GuzzleHttp\Psr7\Response
 {
     /**
      * @var array
@@ -32,6 +32,7 @@ abstract class Response extends \GuzzleHttp\Psr7\Response
     final public function getBodyContents()
     {
         return (string)$this->getBody();
+
     }
 
     /**
@@ -41,13 +42,16 @@ abstract class Response extends \GuzzleHttp\Psr7\Response
      */
     public static function buildFromPsrResponse(ResponseInterface $response)
     {
-        return new static(
+        $responses = new static(
             $response->getStatusCode(),
             $response->getHeaders(),
             $response->getBody(),
             $response->getProtocolVersion(),
             $response->getReasonPhrase()
         );
+        $responses->getBody()->rewind();
+
+        return $responses;
     }
 
     /**
@@ -61,11 +65,29 @@ abstract class Response extends \GuzzleHttp\Psr7\Response
     }
 
     /**
-     * Build to array.
+     * toArray.
+     *
+     * @param string|null $content
      *
      * @return array
      */
-    abstract public function toArray();
+    public function toArray(string $content = null)
+    {
+        if (!empty($this->array)) {
+            return $this->array;
+        }
+        if (is_null($content)) {
+            $content = $this->getBodyContents();
+        }
+
+        $array = \GuzzleHttp\json_decode($content, true, 512, JSON_BIGINT_AS_STRING);
+
+        if (JSON_ERROR_NONE === json_last_error()) {
+            return (array)$array;
+        }
+
+        return [];
+    }
 
     /**
      * toCollection.
