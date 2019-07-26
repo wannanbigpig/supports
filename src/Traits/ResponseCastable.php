@@ -28,23 +28,31 @@ trait ResponseCastable
      * @param \Psr\Http\Message\ResponseInterface  $return
      * @param \WannanBigPig\Supports\Http\Response $response
      * @param string                               $type
+     * @param bool                                 $is_build
      *
-     * @return array|object|\Psr\Http\Message\ResponseInterface|\WannanBigPig\Supports\Collection|\WannanBigPig\Supports\Http\Response
+     * @return array|object|\WannanBigPig\Supports\Collection|\WannanBigPig\Supports\Http\Response
      *
      * @throws \WannanBigPig\Supports\Exceptions\InvalidArgumentException
      */
-    protected function castResponseToType(ResponseInterface $return, Response $response, $type = null)
-    {
-        $return = $response::buildFromPsrResponse($return);
+    protected function castResponseToType(
+        ResponseInterface $return,
+        string $type = null,
+        Response $response = null,
+        $is_build = true
+    ) {
+        if ($is_build) {
+            $response = is_null($response) ? Response::buildFromPsrResponse($return) : $response::buildFromPsrResponse($return);
+        }
+
         switch ($type ?? 'array') {
             case 'collection':
-                return $return->toCollection();
+                return $response->toCollection();
             case 'array':
-                return $return->toArray();
+                return $response->toArray();
             case 'object':
-                return $return->toObject();
+                return $response->toObject();
             case 'raw':
-                return $return;
+                return $response;
             default:
                 if (!method_exists(Response::class, $type)) {
                     throw new InvalidArgumentException(sprintf(
@@ -53,7 +61,7 @@ trait ResponseCastable
                     ));
                 }
 
-                return $return->{$type()};
+                return $response->{$type()};
         }
     }
 }

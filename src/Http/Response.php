@@ -39,7 +39,7 @@ abstract class Response extends \GuzzleHttp\Psr7\Response
      *
      * @return \WannanBigPig\Supports\Http\Response
      */
-    final public static function buildFromPsrResponse(ResponseInterface $response)
+    public static function buildFromPsrResponse(ResponseInterface $response)
     {
         return new static(
             $response->getStatusCode(),
